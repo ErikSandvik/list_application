@@ -14,6 +14,10 @@ Hent Flutter pakker med:
 'flutter pub get'
 Og så kjør programmet med:
 'flutter run'
+For at dette skal fungere så må Flutter være satt i Path variables.
 
 Det er potensielle problemer ved å kjøre app-en på emulatorer med hardware acceleratio aktivert. For å fikse dette kan
 man kjøre programmet via 'flutter run --enable-software-rendering' i kommandolinjen.
+
+Husk å laste ned Flutter:
+https://docs.flutter.dev/get-started/install
