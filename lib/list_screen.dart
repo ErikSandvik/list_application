@@ -165,16 +165,18 @@ class ListScreenState extends State<ListScreen> {
             newPosition -= 1;
           }
           final String entryToReorder = entries.removeAt(oldPosition);
-          _uncompletedEntries.insert(newPosition, entryToReorder);
+          entries.insert(newPosition, entryToReorder);
         });
 
         _saveData();
       },
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      children: entries.map((item) {
+      children: entries.asMap().entries.map((entry) {
+        int index = entry.key;
+        String item = entry.value;
         return ListTile(
-          key: ValueKey(item),
+          key: ValueKey('$index-$item'),
           title: Text(
             item,
             style: isCompleted ? completedListItemTextStyle : listItemTextStyle,
@@ -182,13 +184,14 @@ class ListScreenState extends State<ListScreen> {
           tileColor: listTileColor,
           onTap: () => _toggleEntry(item, isCompleted),
           trailing: ReorderableDragStartListener(
-            index: entries.indexOf(item),
+            index: index,
             child: const SizedBox.shrink(),
           ),
         );
       }).toList(),
     );
   }
+
 
   /// Builds section headers to separate the completed section
   /// from the uncompleted section of the list.
