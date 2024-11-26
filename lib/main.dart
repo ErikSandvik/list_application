@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'List App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.blueGrey,
@@ -61,9 +62,9 @@ class HomeScreenState extends State<HomeScreen> {
     setState(() {
       final storedLists = sharedPreferences.getStringList(sharedPreferencesKeyLists);
       if (storedLists != null) {
-        _lists = List.of(storedLists);
+        _lists = storedLists;
       } else {
-        _lists = List.of(defaultLists);
+        _lists = defaultLists;
       }
     });
   }
@@ -110,7 +111,6 @@ class HomeScreenState extends State<HomeScreen> {
     if (confirmDelete == true) {
       String listName = _lists[index];
       setState(() {
-        _lists = List.of(_lists);
         _lists.removeAt(index);
       });
 
@@ -139,28 +139,42 @@ class HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) {
         String input = '';
-        return AlertDialog(
-          title: const Text('Legg til ny liste.'),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(hintText: 'Skriv inn navn på liste.'),
-            onChanged: (value) => input = value.trim(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, input),
-              child: const Text('Legg til'),
-            ),
-          ],
+        bool isValid = false;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Legg til ny liste.'),
+              content: TextField(
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Skriv inn navn på liste.'),
+                onChanged: (value) {
+                  setState(() {
+                    input = value.trim();
+                    isValid = input.isNotEmpty;
+                  });
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: isValid
+                      ? () => Navigator.pop(context, input)
+                      : null,
+                  child: const Text('Legg til'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
 
     if (newListName == null || newListName.isEmpty) return;
+
     if (_lists.contains(newListName)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,8 +183,8 @@ class HomeScreenState extends State<HomeScreen> {
       }
       return;
     }
+
     setState(() {
-      _lists = List.of(_lists);
       _lists.add(newListName);
     });
 
@@ -181,6 +195,7 @@ class HomeScreenState extends State<HomeScreen> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -220,13 +235,14 @@ class HomeScreenState extends State<HomeScreen> {
                 (entry) => Stack(
               children: [
                 ListScreen(title: entry.value),
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: FloatingActionButton(
-                    mini: true,
-                    onPressed: () => _deleteList(entry.key),
-                    child: const Icon(deleteListIcon),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: FloatingActionButton(
+                      onPressed: () => _deleteList(entry.key),
+                      child: const Icon(deleteListIcon),
+                    ),
                   ),
                 ),
               ],
@@ -240,4 +256,5 @@ class HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 }

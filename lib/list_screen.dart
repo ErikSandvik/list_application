@@ -34,8 +34,8 @@ class ListScreenState extends State<ListScreen> {
       if (await file.exists()) {
         final data = json.decode(await file.readAsString());
         setState(() {
-          _uncompletedEntries = List.of(List<String>.from(data['uncompleted']));
-          _completedEntries = List.of(List<String>.from(data['completed']));
+          _uncompletedEntries = List<String>.from(data['uncompleted']);
+          _completedEntries = List<String>.from(data['completed']);
         });
       }
     } catch (e) {
@@ -67,7 +67,6 @@ class ListScreenState extends State<ListScreen> {
   void _addEntry(String entry) {
     if (entry.trim().isNotEmpty) {
       setState(() {
-        _uncompletedEntries = List.of(_uncompletedEntries);
         _uncompletedEntries.add(entry);
       });
       _controller.clear();
@@ -80,8 +79,6 @@ class ListScreenState extends State<ListScreen> {
   void _toggleEntry(String entry, bool isCompleted) {
     setState(() {
       if (isCompleted) {
-        _completedEntries = List.of(_completedEntries);
-        _uncompletedEntries = List.of(_uncompletedEntries);
         _completedEntries.remove(entry);
         _uncompletedEntries.add(entry);
       } else {
@@ -161,13 +158,14 @@ class ListScreenState extends State<ListScreen> {
     return ReorderableListView(
       onReorder: (oldPosition, newPosition) {
         setState(() {
-          entries = List.of(entries);
           if (newPosition > oldPosition) {
-            newPosition = newPosition - 1;
+            newPosition -= 1;
           }
+
           final String entryToReorder = entries.removeAt(oldPosition);
-          entries.insert(newPosition, entryToReorder);
+          _uncompletedEntries.insert(newPosition, entryToReorder);
         });
+
         _saveData();
       },
       shrinkWrap: true,
@@ -177,7 +175,7 @@ class ListScreenState extends State<ListScreen> {
           key: ValueKey(item),
           title: Text(
             item,
-            style: listItemTextStyle,
+            style: isCompleted ? completedListItemTextStyle : listItemTextStyle,
           ),
           tileColor: listTileColor,
           onTap: () => _toggleEntry(item, isCompleted),
