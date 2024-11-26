@@ -198,7 +198,6 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -236,7 +235,10 @@ class HomeScreenState extends State<HomeScreen> {
               .map(
                 (entry) => Stack(
               children: [
-                ListScreen(title: entry.value),
+                ListScreen(
+                  key: ValueKey(entry.value),
+                  title: entry.value,
+                ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
@@ -258,5 +260,4 @@ class HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }

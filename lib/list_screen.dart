@@ -98,31 +98,26 @@ class ListScreenState extends State<ListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(sectionHeaderPadding),
-              child: TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                autofocus: true,
-                textInputAction: TextInputAction.done,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Legg til',
-                  labelStyle: TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(),
-                ),
-                onSubmitted: _addEntry,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(sectionHeaderPadding),
+            child: TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              autofocus: true,
+              textInputAction: TextInputAction.done,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'Legg til',
+                labelStyle: TextStyle(color: Colors.white),
+                border: OutlineInputBorder(),
               ),
+              onSubmitted: _addEntry,
             ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).viewInsets.bottom -
-                    100,
-              ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   _buildSectionHeader(
@@ -149,14 +144,14 @@ class ListScreenState extends State<ListScreen> {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  /// Builds a Reorderable list, that allows user to reorder entries on the list
-  /// by long tapping and dragging.
+  /// Builds a Reorderable list that allows user to reorder entries
+  /// on the list by long tapping and dragging.
   Widget _buildReorderableListView(List<String> entries, bool isCompleted) {
     return ReorderableListView(
       onReorder: (oldPosition, newPosition) {
@@ -191,7 +186,6 @@ class ListScreenState extends State<ListScreen> {
       }).toList(),
     );
   }
-
 
   /// Builds section headers to separate the completed section
   /// from the uncompleted section of the list.
