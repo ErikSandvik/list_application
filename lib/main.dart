@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'List App',
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.blueGrey,
@@ -62,9 +61,9 @@ class HomeScreenState extends State<HomeScreen> {
     setState(() {
       final storedLists = sharedPreferences.getStringList(sharedPreferencesKeyLists);
       if (storedLists != null) {
-        _lists = storedLists;
+        _lists = List.of(storedLists);
       } else {
-        _lists = defaultLists;
+        _lists = List.of(defaultLists);
       }
     });
   }
@@ -111,6 +110,7 @@ class HomeScreenState extends State<HomeScreen> {
     if (confirmDelete == true) {
       String listName = _lists[index];
       setState(() {
+        _lists = List.of(_lists);
         _lists.removeAt(index);
       });
 
@@ -189,6 +189,7 @@ class HomeScreenState extends State<HomeScreen> {
     });
 
     await _saveLists();
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('$listAddedMessage "$newListName".')),
